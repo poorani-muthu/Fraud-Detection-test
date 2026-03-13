@@ -1,0 +1,5 @@
+data/transactions.csv
+models/best_model.pkl
+static/analysis.json
+__pycache__/
+*.pyc

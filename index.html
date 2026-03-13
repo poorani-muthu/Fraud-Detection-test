@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>FraudGuard — Fraud Detection · Poorani M</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#04080f;--bg2:#080f1a;--bg3:#0d1626;--bd:#152035;--tx:#e2e8f0;--tx2:#94a3b8;--mu:#3d5570;
+  --ac:#f43f5e;--ac2:#fb7185;--gr:#10b981;--ye:#f59e0b;--bl:#6366f1;--te:#06b6d4;--pu:#a78bfa}
+body{background:var(--bg);color:var(--tx);font-family:"Segoe UI",system-ui,sans-serif;min-height:100vh}
+nav{position:sticky;top:0;z-index:100;background:rgba(4,8,15,.97);backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--bd);display:flex;align-items:center;padding:0 28px;height:54px;overflow-x:auto}
+.logo{display:flex;align-items:center;gap:10px;margin-right:28px;white-space:nowrap}
+.logo-icon{width:28px;height:28px;background:linear-gradient(135deg,#f43f5e,#fb923c);border-radius:8px;
+  display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.logo-text{font-size:14px;font-weight:700;letter-spacing:.5px}
+.logo-sub{font-size:10px;color:var(--mu);font-family:monospace}
+.nl{padding:0 14px;height:54px;display:flex;align-items:center;font-size:11px;color:var(--tx2);
+  cursor:pointer;white-space:nowrap;border-bottom:2px solid transparent;transition:all .2s;
+  text-transform:uppercase;letter-spacing:1px;gap:6px}
+.nl:hover{color:var(--tx)}.nl.act{color:var(--ac2);border-bottom-color:var(--ac)}
+.nl-dot{width:6px;height:6px;border-radius:50%;background:currentColor;opacity:.7}
+main{max-width:1320px;margin:0 auto;padding:32px 28px}
+.pg{display:none}.pg.act{display:block}
+.sh{margin-bottom:32px;padding-bottom:24px;border-bottom:1px solid var(--bd)}
+.sh h2{font-size:24px;font-weight:700;margin-bottom:8px;letter-spacing:-.3px}
+.sh p{color:var(--tx2);font-size:13px;line-height:1.7;max-width:740px}
+.st{font-size:10px;color:var(--ac);text-transform:uppercase;letter-spacing:2.5px;font-family:monospace;margin-bottom:8px}
+.pill{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;
+  font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;margin:2px}
+.p-rd{background:rgba(244,63,94,.12);color:#f43f5e}.p-gr{background:rgba(16,185,129,.12);color:#10b981}
+.p-ye{background:rgba(245,158,11,.12);color:#f59e0b}.p-bl{background:rgba(99,102,241,.12);color:#818cf8}
+.p-te{background:rgba(6,182,212,.12);color:#06b6d4}.p-pu{background:rgba(167,139,250,.12);color:#a78bfa}
+.cc{background:var(--bg2);border:1px solid var(--bd);border-radius:16px;padding:22px 24px;margin-bottom:18px}
+.cc h3{font-size:13px;font-weight:600;margin-bottom:4px;color:var(--tx);letter-spacing:.3px}
+.cc p{font-size:12px;color:var(--tx2);margin-bottom:14px;line-height:1.5}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:18px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:18px}
+@media(max-width:860px){.g2,.g3{grid-template-columns:1fr}}
+.kg{display:grid;grid-template-columns:repeat(auto-fill,minmax(165px,1fr));gap:12px;margin-bottom:22px}
+.kp{background:var(--bg2);border:1px solid var(--bd);border-radius:14px;padding:16px 18px;position:relative;overflow:hidden;transition:border-color .2s}
+.kp:hover{border-color:var(--mu)}
+.kl{font-size:10px;color:var(--tx2);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
+.kv{font-size:22px;font-weight:700;margin-bottom:3px;letter-spacing:-.5px}
+.ks{font-size:11px;color:var(--mu)}.kb{position:absolute;bottom:0;left:0;right:0;height:3px}
+.kp::before{content:'';position:absolute;top:0;right:0;width:60px;height:60px;border-radius:50%;
+  background:var(--accent-c,#f43f5e);opacity:.04;transform:translate(15px,-15px)}
+.dg{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px;margin-bottom:22px}
+.dc{background:var(--bg3);border:1px solid var(--bd);border-radius:12px;padding:14px;display:flex;gap:12px;align-items:flex-start}
+.di{font-size:20px;flex-shrink:0;margin-top:1px}.dl{font-size:10px;color:var(--mu);text-transform:uppercase;letter-spacing:1px}
+.dv{font-size:13px;font-weight:600;margin:3px 0}.dsub{font-size:11px;color:var(--tx2)}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th{text-align:left;padding:9px 12px;color:var(--mu);font-weight:600;text-transform:uppercase;
+  letter-spacing:1px;border-bottom:1px solid var(--bd);white-space:nowrap;font-size:10px}
+td{padding:9px 12px;border-bottom:1px solid rgba(21,32,53,.6);vertical-align:middle}
+tr:hover td{background:rgba(244,63,94,.03)}
+/* MODEL TABS */
+.tabs{display:flex;gap:4px;margin-bottom:18px;background:var(--bg3);padding:4px;border-radius:10px;width:fit-content}
+.tab{padding:6px 16px;border-radius:7px;font-size:11px;cursor:pointer;color:var(--tx2);transition:all .2s;font-weight:500}
+.tab:hover{color:var(--tx)}.tab.act{background:var(--ac);color:#fff;font-weight:600}
+/* PREDICT FORM */
+.form-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:18px}
+@media(max-width:860px){.form-grid{grid-template-columns:1fr 1fr}}
+.fg{display:flex;flex-direction:column;gap:5px}
+.fg label{font-size:11px;color:var(--tx2);text-transform:uppercase;letter-spacing:.8px;font-weight:500}
+.fg input,.fg select{background:var(--bg3);border:1px solid var(--bd);border-radius:8px;
+  padding:8px 12px;color:var(--tx);font-size:13px;transition:border-color .2s;font-family:inherit;width:100%}
+.fg input:focus,.fg select:focus{outline:none;border-color:var(--ac)}
+.fg input::placeholder{color:var(--mu)}
+.btn{padding:11px 28px;border-radius:10px;border:none;font-size:13px;font-weight:600;cursor:pointer;
+  transition:all .2s;letter-spacing:.3px;display:inline-flex;align-items:center;gap:8px}
+.btn-primary{background:linear-gradient(135deg,#f43f5e,#fb923c);color:#fff}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(244,63,94,.3)}
+.btn-ghost{background:var(--bg3);border:1px solid var(--bd);color:var(--tx2)}
+.btn-ghost:hover{border-color:var(--ac);color:var(--tx)}
+/* RESULT BOX */
+.result-box{border-radius:16px;padding:24px;border:2px solid;margin-top:18px;display:none}
+.result-fraud{border-color:#f43f5e;background:rgba(244,63,94,.06)}
+.result-legit{border-color:#10b981;background:rgba(16,185,129,.06)}
+.result-title{font-size:20px;font-weight:700;margin-bottom:4px;display:flex;align-items:center;gap:10px}
+.result-prob{font-size:36px;font-weight:700;margin:10px 0}
+.risk-badge{padding:4px 14px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase}
+.risk-CRITICAL{background:rgba(244,63,94,.2);color:#f43f5e}
+.risk-HIGH{background:rgba(251,146,60,.2);color:#fb923c}
+.risk-MEDIUM{background:rgba(245,158,11,.2);color:#f59e0b}
+.risk-LOW{background:rgba(16,185,129,.2);color:#10b981}
+/* SHAP bar */
+.shap-bar{display:flex;align-items:center;gap:10px;margin:5px 0}
+.shap-label{font-size:11px;color:var(--tx2);width:130px;flex-shrink:0;text-align:right}
+.shap-track{flex:1;height:16px;background:var(--bg3);border-radius:4px;overflow:hidden;position:relative}
+.shap-fill-pos{height:100%;border-radius:4px;background:linear-gradient(90deg,#f43f5e88,#f43f5e);transition:width .5s}
+.shap-fill-neg{height:100%;border-radius:4px;background:linear-gradient(90deg,#10b98188,#10b981);transition:width .5s}
+.shap-val{font-size:10px;color:var(--mu);width:45px;text-align:left;font-family:monospace}
+/* CANVAS */
+canvas{display:block;width:100%}
+/* METHODOLOGY */
+.ms{display:flex;gap:16px;padding:16px 0;border-bottom:1px solid var(--bd)}.ms:last-child{border:none}
+.mn{width:28px;height:28px;min-width:28px;border-radius:50%;background:linear-gradient(135deg,#f43f5e,#fb923c);
+  color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;margin-top:2px}
+.ms h4{font-size:13px;font-weight:600;margin-bottom:5px}
+.ms p{font-size:12px;color:var(--tx2);line-height:1.7}
+.mbadge{background:var(--bg3);color:var(--ac2);font-size:10px;padding:2px 8px;border-radius:4px;margin-left:8px;font-weight:400}
+/* ALERTS */
+.alert{padding:10px 14px;border-radius:8px;font-size:12px;margin-bottom:14px;display:none}
+.alert-err{background:rgba(244,63,94,.1);border:1px solid rgba(244,63,94,.3);color:#fb7185}
+.alert-ok{background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.3);color:#34d399}
+</style>
+</head>
+<body>
+<nav>
+  <div class="logo">
+    <div class="logo-icon">🛡</div>
+    <div><div class="logo-text">FraudGuard</div><div class="logo-sub">Poorani M · IIT Dhanbad</div></div>
+  </div>
+  <div class="nl act" onclick="go('eda',this)"><div class="nl-dot"></div>EDA</div>
+  <div class="nl" onclick="go('models',this)"><div class="nl-dot"></div>Models</div>
+  <div class="nl" onclick="go('shap',this)"><div class="nl-dot"></div>Explainability</div>
+  <div class="nl" onclick="go('predict',this)"><div class="nl-dot"></div>Live Predict</div>
+  <div class="nl" onclick="go('methodology',this)"><div class="nl-dot"></div>Methodology</div>
+</nav>
+
+<!-- EDA ─────────────────────────────────────────────────── -->
+<div class="pg act" id="pg-eda"><main>
+  <div class="sh">
+    <div class="st">Poorani M · IIT Dhanbad · Data Science Portfolio</div>
+    <h2>Fraud Detection — Exploratory Data Analysis</h2>
+    <p>50,000 real-world-pattern transactions with engineered features. Dataset mirrors the Kaggle IEEE-CIS Fraud Detection challenge structure with distance, velocity, and behavioural signals.</p>
+    <div style="margin-top:12px">
+      <span class="pill p-rd">50K Transactions</span>
+      <span class="pill p-ye">2% Fraud Rate</span>
+      <span class="pill p-bl">18 Features</span>
+      <span class="pill p-gr">SMOTE Balanced</span>
+    </div>
+  </div>
+  <div class="dg" id="eda-dg"></div>
+  <div class="kg" id="eda-kg"></div>
+  <div class="g2">
+    <div class="cc"><h3>Transaction Amount Distribution</h3><p>Fraud skews towards higher amounts. Mean fraud £<span id="fraud-mean">—</span> vs legitimate £<span id="legit-mean">—</span>.</p><canvas id="ch-amount" height="210"></canvas></div>
+    <div class="cc"><h3>Fraud by Hour of Day</h3><p>Fraud peaks in late-night / early-morning hours when monitoring is lighter.</p><canvas id="ch-hour" height="210"></canvas></div>
+  </div>
+  <div class="g2">
+    <div class="cc"><h3>Fraud Rate by Merchant Category</h3><p>Online and travel merchants show highest fraud concentration.</p><canvas id="ch-merchant" height="220"></canvas></div>
+    <div class="cc"><h3>Feature Correlations with Fraud</h3><p>Distance features and ratio-to-median are strongest fraud predictors.</p><canvas id="ch-corr" height="220"></canvas></div>
+  </div>
+  <div class="cc"><h3>Feature Comparison — Fraud vs Legitimate</h3><div id="feat-compare-table" style="overflow-x:auto;margin-top:4px"></div></div>
+</main></div>
+
+<!-- MODELS ──────────────────────────────────────────────── -->
+<div class="pg" id="pg-models"><main>
+  <div class="sh"><div class="st">Step 2 of 4</div><h2>Model Comparison</h2>
+    <p>Three models trained with SMOTE oversampling. Evaluated on held-out test set (10,000 transactions, 200 fraud).</p></div>
+  <div class="kg" id="model-kg"></div>
+  <div class="tabs" id="model-tabs">
+    <div class="tab act" onclick="selModel('Logistic Regression',this)">Logistic Regression</div>
+    <div class="tab" onclick="selModel('Random Forest',this)">Random Forest</div>
+    <div class="tab" onclick="selModel('Gradient Boosting',this)">Gradient Boosting</div>
+  </div>
+  <div class="g2">
+    <div class="cc"><h3>ROC Curve</h3><p>Area under ROC — ability to distinguish fraud from legitimate.</p><canvas id="ch-roc" height="230"></canvas></div>
+    <div class="cc"><h3>Precision-Recall Curve</h3><p>More informative than ROC for imbalanced datasets.</p><canvas id="ch-prc" height="230"></canvas></div>
+  </div>
+  <div class="g2">
+    <div class="cc"><h3>Confusion Matrix</h3><div id="confmat" style="margin-top:8px"></div></div>
+    <div class="cc"><h3>Threshold Analysis</h3><p>How precision, recall and F1 change across decision thresholds.</p><canvas id="ch-thr" height="210"></canvas></div>
+  </div>
+  <div class="cc"><h3>SMOTE — Class Rebalancing</h3><div id="smote-info"></div></div>
+</main></div>
+
+<!-- SHAP ────────────────────────────────────────────────── -->
+<div class="pg" id="pg-shap"><main>
+  <div class="sh"><div class="st">Step 3 of 4</div><h2>Model Explainability</h2>
+    <p>Feature importance from all three models + SHAP-style contribution analysis on the top 5 highest-confidence fraud predictions.</p></div>
+  <div class="tabs" id="imp-tabs">
+    <div class="tab act" onclick="selImp('Random Forest',this)">Random Forest</div>
+    <div class="tab" onclick="selImp('Gradient Boosting',this)">Gradient Boosting</div>
+    <div class="tab" onclick="selImp('Logistic Regression',this)">Logistic Regression</div>
+  </div>
+  <div class="g2">
+    <div class="cc"><h3>Feature Importance</h3><p>Ranked contribution of each feature to the model's predictions.</p><canvas id="ch-fimp" height="280"></canvas></div>
+    <div class="cc"><h3>Fraud Score Distribution</h3><p>Separation between fraud and legitimate score distributions — wider gap = better model.</p><canvas id="ch-sdist" height="280"></canvas></div>
+  </div>
+  <div class="cc"><h3>SHAP-Style Explanations — Top 5 Fraud Cases</h3>
+    <p>Feature contributions for the 5 highest-confidence fraud predictions. Red = pushed score up (fraud signal). Green = pushed score down (legit signal).</p>
+    <div id="shap-cards"></div>
+  </div>
+</main></div>
+
+<!-- PREDICT ─────────────────────────────────────────────── -->
+<div class="pg" id="pg-predict"><main>
+  <div class="sh"><div class="st">Live Inference</div><h2>Transaction Fraud Detector</h2>
+    <p>Enter transaction details below and get an instant fraud probability score with feature-level explanation. The model was trained on 50,000 transactions with SMOTE oversampling.</p></div>
+  <div style="display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap">
+    <button class="btn btn-ghost" onclick="loadExample('fraud')">⚠ Load Fraud Example</button>
+    <button class="btn btn-ghost" onclick="loadExample('legit')">✓ Load Legit Example</button>
+    <button class="btn btn-ghost" onclick="clearForm()">↺ Clear</button>
+  </div>
+  <div class="cc">
+    <div class="form-grid">
+      <div class="fg"><label>Amount (£)</label><input id="f-amount" type="number" step="0.01" min="0" placeholder="e.g. 250.00"/></div>
+      <div class="fg"><label>Hour (0–23)</label><input id="f-hour" type="number" min="0" max="23" placeholder="e.g. 14"/></div>
+      <div class="fg"><label>Day of Week (0=Mon)</label><input id="f-dow" type="number" min="0" max="6" placeholder="e.g. 2"/></div>
+      <div class="fg"><label>Merchant Category</label>
+        <select id="f-merchant">
+          <option value="">Select category</option>
+          <option>entertainment</option><option>gas</option><option>grocery</option>
+          <option>online</option><option>restaurant</option><option>retail</option><option>travel</option>
+        </select>
+      </div>
+      <div class="fg"><label>Distance from Home (km)</label><input id="f-dist-home" type="number" step="0.1" min="0" placeholder="e.g. 5.0"/></div>
+      <div class="fg"><label>Distance from Last Txn (km)</label><input id="f-dist-last" type="number" step="0.1" min="0" placeholder="e.g. 3.0"/></div>
+      <div class="fg"><label>Ratio to User Median</label><input id="f-ratio" type="number" step="0.1" min="0" placeholder="e.g. 1.2"/></div>
+      <div class="fg"><label>Account Age (days)</label><input id="f-acct-age" type="number" min="1" placeholder="e.g. 730"/></div>
+      <div class="fg"><label>Transactions in 24h</label><input id="f-txn24" type="number" min="0" placeholder="e.g. 2"/></div>
+      <div class="fg"><label>Transactions in 7d</label><input id="f-txn7" type="number" min="0" placeholder="e.g. 10"/></div>
+      <div class="fg"><label>PIN Used</label>
+        <select id="f-pin"><option value="">Select</option><option value="1">Yes</option><option value="0">No</option></select>
+      </div>
+      <div class="fg"><label>Online Order</label>
+        <select id="f-online"><option value="">Select</option><option value="1">Yes</option><option value="0">No</option></select>
+      </div>
+      <div class="fg"><label>Repeat Retailer</label>
+        <select id="f-repeat"><option value="">Select</option><option value="1">Yes</option><option value="0">No</option></select>
+      </div>
+    </div>
+    <div class="alert alert-err" id="pred-err"></div>
+    <div style="display:flex;gap:10px;align-items:center">
+      <button class="btn btn-primary" onclick="predict()">🔍 Analyse Transaction</button>
+      <div id="pred-spinner" style="display:none;color:var(--tx2);font-size:12px">Analysing...</div>
+    </div>
+  </div>
+
+  <div class="result-box" id="result-box">
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:16px">
+      <div>
+        <div class="result-title" id="res-title"></div>
+        <div class="result-prob" id="res-prob"></div>
+        <span class="risk-badge" id="res-risk"></span>
+        <div style="font-size:11px;color:var(--tx2);margin-top:8px" id="res-model"></div>
+      </div>
+      <div style="flex:1;min-width:280px">
+        <div style="font-size:11px;color:var(--tx2);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Top Contributing Features</div>
+        <div id="res-features"></div>
+      </div>
+    </div>
+  </div>
+</main></div>
+
+<!-- METHODOLOGY ─────────────────────────────────────────── -->
+<div class="pg" id="pg-methodology"><main>
+  <div class="sh"><div class="st">Reference</div><h2>Methodology</h2>
+    <p>Complete end-to-end pipeline — dataset, preprocessing, models, evaluation, and deployment.</p></div>
+  <div class="cc" id="meth-content"></div>
+</main></div>
+
+<script>
+// ── DATA ──────────────────────────────────────────────────────────────────────
+var G = null;
+var rendered = {};
+var curModel = 'Logistic Regression';
+var curImp   = 'Random Forest';
+
+// ── CHART ENGINE (zero dependencies) ─────────────────────────────────────────
+var COLORS = ['#f43f5e','#6366f1','#10b981','#f59e0b','#06b6d4','#a78bfa','#fb923c','#34d399','#818cf8'];
+
+function drawChart(id, cfg) {
+  var el = document.getElementById(id);
+  if (!el) return;
+  var W = el.parentElement.offsetWidth - 2 || 480;
+  var H = parseInt(el.getAttribute('height')) || 200;
+  el.width = W; el.height = H;
+  var ctx = el.getContext('2d');
+  ctx.clearRect(0, 0, W, H);
+
+  var pad = {t:24, r:20, b:38, l:56};
+  var cW = W - pad.l - pad.r, cH = H - pad.t - pad.b;
+
+  var allVals = [];
+  (cfg.datasets||[]).forEach(function(ds){ (ds.data||[]).forEach(function(v){ if(v!=null) allVals.push(v); }); });
+  (cfg.refs||[]).forEach(function(r){ allVals.push(r.v); });
+  if (!allVals.length) return;
+
+  var minV = cfg.yMin != null ? cfg.yMin : Math.min.apply(null, allVals);
+  var maxV = cfg.yMax != null ? cfg.yMax : Math.max.apply(null, allVals);
+  var pad_v = (maxV - minV) * 0.05 || 0.05;
+  if (cfg.yMin == null) minV -= pad_v;
+  if (cfg.yMax == null) maxV += pad_v;
+  if (minV >= maxV) maxV = minV + 1;
+
+  var n = cfg.labels ? cfg.labels.length : 0;
+  function xL(i){ return pad.l + i/(n>1?n-1:1)*cW; }
+  function xB(i){ return pad.l + (i+0.1)/n*cW; }
+  function bW(){ return cW/n*0.75; }
+  function yP(v){ return pad.t + cH - (v-minV)/(maxV-minV)*cH; }
+
+  // Grid
+  ctx.strokeStyle = 'rgba(255,255,255,0.04)'; ctx.lineWidth = 1;
+  for (var s=0; s<=5; s++) {
+    var gv = minV + (maxV-minV)*s/5;
+    var gy = yP(gv);
+    ctx.beginPath(); ctx.moveTo(pad.l, gy); ctx.lineTo(W-pad.r, gy); ctx.stroke();
+    ctx.fillStyle = '#3d5570'; ctx.font = '10px monospace'; ctx.textAlign = 'right';
+    var fmt = cfg.yFmt != null ? cfg.yFmt : 2;
+    ctx.fillText(gv.toFixed(fmt), pad.l-4, gy+3);
+  }
+
+  // X labels
+  if (cfg.labels) {
+    ctx.fillStyle = '#3d5570'; ctx.font = '10px monospace'; ctx.textAlign = 'center';
+    cfg.labels.forEach(function(lb, i) {
+      var x = cfg.type==='bar' ? xB(i)+bW()/2 : xL(i);
+      var lbl = String(lb).length > 7 ? String(lb).slice(0,6)+'…' : String(lb);
+      ctx.fillText(lbl, x, H-6);
+    });
+  }
+
+  // Ref lines
+  (cfg.refs||[]).forEach(function(ref) {
+    ctx.setLineDash(ref.dash || [5,4]);
+    ctx.strokeStyle = ref.color || 'rgba(255,255,255,0.3)';
+    ctx.lineWidth = 1.5;
+    var ry = yP(ref.v);
+    ctx.beginPath(); ctx.moveTo(pad.l, ry); ctx.lineTo(W-pad.r, ry); ctx.stroke();
+    ctx.setLineDash([]);
+    if (ref.label) {
+      ctx.fillStyle = ref.color; ctx.font='9px monospace'; ctx.textAlign='right';
+      ctx.fillText(ref.label, W-pad.r, ry-3);
+    }
+  });
+
+  // Datasets
+  (cfg.datasets||[]).forEach(function(ds) {
+    ctx.setLineDash([]);
+    if (cfg.type==='bar' || ds.type==='bar') {
+      (ds.data||[]).forEach(function(v, i) {
+        if (v==null) return;
+        var x = xB(i), bw = bW();
+        var y0 = yP(Math.max(minV, 0)), y1 = yP(v);
+        ctx.fillStyle = Array.isArray(ds.colors) ? ds.colors[i] : (ds.color || '#f43f5e');
+        var top = Math.min(y0, y1), h = Math.abs(y0-y1);
+        if (h < 1) h = 1;
+        ctx.beginPath(); ctx.roundRect(x, top, bw, h, [3,3,0,0]); ctx.fill();
+      });
+    } else {
+      ctx.strokeStyle = ds.color || '#f43f5e';
+      ctx.lineWidth = ds.width || 2.5;
+      if (ds.dash) ctx.setLineDash(ds.dash);
+      if (ds.fill) {
+        ctx.beginPath();
+        (ds.data||[]).forEach(function(v, i) { if(v==null) return; var x=xL(i),y=yP(v); i===0?ctx.moveTo(x,y):ctx.lineTo(x,y); });
+        ctx.lineTo(xL((ds.data||[]).length-1), pad.t+cH);
+        ctx.lineTo(xL(0), pad.t+cH); ctx.closePath();
+        ctx.fillStyle = ds.color || '#f43f5e'; ctx.globalAlpha=0.07; ctx.fill(); ctx.globalAlpha=1;
+      }
+      ctx.beginPath(); var started=false;
+      (ds.data||[]).forEach(function(v, i) {
+        if (v==null) return;
+        var x=xL(i), y=yP(v);
+        if (!started) { ctx.moveTo(x,y); started=true; } else ctx.lineTo(x,y);
+      });
+      ctx.stroke(); ctx.setLineDash([]);
+      if (!ds.noPoints) {
+        (ds.data||[]).forEach(function(v, i) {
+          if (v==null) return;
+          ctx.beginPath(); ctx.arc(xL(i), yP(v), ds.ptR||4, 0, Math.PI*2);
+          ctx.fillStyle = Array.isArray(ds.ptColors) ? ds.ptColors[i] : (ds.color||'#f43f5e');
+          ctx.fill(); ctx.strokeStyle='rgba(4,8,15,0.8)'; ctx.lineWidth=1.5; ctx.stroke();
+        });
+      }
+    }
+  });
+
+  // Legend
+  if (cfg.legend) {
+    var lx=pad.l, ly=10;
+    ctx.font='10px sans-serif';
+    cfg.legend.forEach(function(l) {
+      ctx.fillStyle=l.color; ctx.fillRect(lx,ly-7,11,8);
+      ctx.fillStyle='#94a3b8'; ctx.textAlign='left';
+      ctx.fillText(l.label,lx+15,ly+2);
+      lx += ctx.measureText(l.label).width+28;
+    });
+  }
+}
+
+function drawHBar(id, labels, values, colors, maxV_override) {
+  var el = document.getElementById(id);
+  if (!el) return;
+  var W = el.parentElement.offsetWidth-2 || 400;
+  var H = parseInt(el.getAttribute('height')) || 260;
+  el.width=W; el.height=H;
+  var ctx = el.getContext('2d');
+  ctx.clearRect(0,0,W,H);
+  var pad = {t:8,r:60,b:8,l:130};
+  var n=labels.length, bH=(H-pad.t-pad.b)/n*0.6, gap=(H-pad.t-pad.b)/n;
+  var maxV = maxV_override || Math.max.apply(null, values);
+  values.forEach(function(v,i) {
+    var y = pad.t+i*gap+(gap-bH)/2;
+    var bw = (v/maxV)*(W-pad.l-pad.r);
+    ctx.fillStyle = (colors[i%colors.length])+'bb';
+    ctx.beginPath(); ctx.roundRect(pad.l,y,Math.max(2,bw),bH,3); ctx.fill();
+    ctx.fillStyle='#94a3b8'; ctx.font='11px sans-serif'; ctx.textAlign='right';
+    ctx.fillText(labels[i], pad.l-6, y+bH/2+4);
+    ctx.fillStyle='#e2e8f0'; ctx.font='10px monospace'; ctx.textAlign='left';
+    ctx.fillText(v.toFixed(4), pad.l+bw+6, y+bH/2+4);
+  });
+}
+
+// ── NAV ───────────────────────────────────────────────────────────────────────
+function go(name, el) {
+  document.querySelectorAll('.pg').forEach(function(p){ p.classList.remove('act'); });
+  document.querySelectorAll('.nl').forEach(function(n){ n.classList.remove('act'); });
+  document.getElementById('pg-'+name).classList.add('act');
+  if (el) el.classList.add('act');
+  if (!rendered[name]) { rendered[name]=true; renderPage(name); }
+}
+function renderPage(n) {
+  if (n==='eda')         renderEDA();
+  else if (n==='models') renderModels();
+  else if (n==='shap')   renderSHAP();
+  else if (n==='methodology') renderMethod();
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+async function init() {
+  try {
+    var r = await fetch('/api/analysis');
+    G = await r.json();
+    rendered['eda'] = true;
+    renderEDA();
+  } catch(e) {
+    document.body.innerHTML = '<div style="padding:40px;color:#f43f5e;font-family:monospace">ERROR: Could not reach /api/analysis<br>Make sure the FastAPI server is running.<br><small>'+e+'</small></div>';
+  }
+}
+
+function kp(l,v,s,c) {
+  return '<div class="kp" style="--accent-c:'+c+'"><div class="kl">'+l+'</div><div class="kv">'+v+'</div><div class="ks">'+s+'</div><div class="kb" style="background:'+c+'"></div></div>';
+}
+function cmHTML(tp,fp,fn,tn) {
+  var t=tp+fp+fn+tn;
+  return '<table><thead><tr><th></th><th>Pred: Fraud</th><th>Pred: Legitimate</th></tr></thead><tbody>'
+    +'<tr><td><b>Actual: Fraud</b></td>'
+    +'<td style="background:rgba(16,185,129,.1);color:#10b981;font-weight:700;font-size:15px">'+tp+' <small style="font-size:10px;color:var(--tx2);font-weight:400">TP · '+(tp/t*100).toFixed(1)+'%</small></td>'
+    +'<td style="background:rgba(244,63,94,.1);color:#f43f5e;font-weight:700;font-size:15px">'+fn+' <small style="font-size:10px;color:var(--tx2);font-weight:400">FN · '+(fn/t*100).toFixed(1)+'%</small></td></tr>'
+    +'<tr><td><b>Actual: Legitimate</b></td>'
+    +'<td style="background:rgba(245,158,11,.1);color:#f59e0b;font-weight:700;font-size:15px">'+fp+' <small style="font-size:10px;color:var(--tx2);font-weight:400">FP · '+(fp/t*100).toFixed(1)+'%</small></td>'
+    +'<td style="background:rgba(16,185,129,.1);color:#10b981;font-weight:700;font-size:15px">'+tn+' <small style="font-size:10px;color:var(--tx2);font-weight:400">TN · '+(tn/t*100).toFixed(1)+'%</small></td></tr>'
+    +'</tbody></table>';
+}
+
+// ── EDA ───────────────────────────────────────────────────────────────────────
+function renderEDA() {
+  var d = G.eda.dataset;
+  document.getElementById('eda-dg').innerHTML = [
+    {i:'💳',l:'Total Transactions',v:d.total.toLocaleString(),s:'50/50 train-test split'},
+    {i:'⚠️',l:'Fraud Cases',v:d.fraud.toLocaleString(),s:d.fraud_rate.toFixed(2)+'% fraud rate'},
+    {i:'✅',l:'Legitimate',v:d.legit.toLocaleString(),s:'Clean transactions'},
+    {i:'🔢',l:'Features',v:d.n_features,s:'Engineered + anonymised'},
+    {i:'🧬',l:'SMOTE Applied',v:'30% ratio',s:G.smote.after_fraud.toLocaleString()+' synthetic fraud'},
+    {i:'🏆',l:'Best Model',v:G.meta.best_model.split(' ')[0],s:'AUC '+G.meta.best_auc.toFixed(4)},
+  ].map(function(c){ return '<div class="dc"><div class="di">'+c.i+'</div><div><div class="dl">'+c.l+'</div><div class="dv">'+c.v+'</div><div class="dsub">'+c.s+'</div></div></div>'; }).join('');
+
+  document.getElementById('eda-kg').innerHTML = [
+    kp('Best AUC',G.meta.best_auc.toFixed(4),'on test set','#f43f5e'),
+    kp('Fraud Mean Amt','£'+Math.round(G.eda.amount_dist.fraud_mean),'vs £'+Math.round(G.eda.amount_dist.legit_mean)+' legit','#f59e0b'),
+    kp('SMOTE Samples',G.smote.after_fraud.toLocaleString(),'synthetic minority','#6366f1'),
+    kp('Features',d.n_features,'engineered signals','#06b6d4'),
+    kp('Test Fraud',Math.round(d.fraud*0.2),'held-out evaluation','#10b981'),
+    kp('Models Trained','3','LR · RF · GB','#a78bfa'),
+  ].join('');
+
+  document.getElementById('fraud-mean').textContent = Math.round(G.eda.amount_dist.fraud_mean);
+  document.getElementById('legit-mean').textContent = Math.round(G.eda.amount_dist.legit_mean);
+
+  setTimeout(function(){
+    var ad = G.eda.amount_dist;
+    drawChart('ch-amount', {type:'bar', labels: ad.bins,
+      datasets:[
+        {type:'bar', data:ad.fraud, color:'#f43f5e', colors: ad.bins.map(function(){return '#f43f5e99';}), label:'Fraud'},
+        {type:'bar', data:ad.legit.map(function(v,i){ return Math.round(v * ad.fraud.reduce(function(a,b){return a+b;},0) / ad.legit.reduce(function(a,b){return a+b;},0)); }),
+          color:'#6366f199', colors: ad.bins.map(function(){return '#6366f166';}), label:'Legit (scaled)'}
+      ],
+      legend:[{color:'#f43f5e',label:'Fraud'},{color:'#6366f1',label:'Legit (scaled to fraud count)'}],
+      yFmt:0
+    });
+
+    var hd = G.eda.hour_dist;
+    drawChart('ch-hour', {type:'bar', labels: hd.hours,
+      datasets:[
+        {type:'bar', data:hd.fraud, colors: hd.hours.map(function(h){ return (h>=0&&h<=5)||h>=22 ? '#f43f5e' : '#f43f5e66'; })},
+      ], yFmt:0
+    });
+
+    var md = G.eda.merchant_dist;
+    drawChart('ch-merchant', {type:'bar', labels: md.categories,
+      datasets:[{type:'bar', data:md.fraud_rate, colors: md.fraud_rate.map(function(r){
+        return r>3?'#f43f5e':r>2?'#f59e0b':'#6366f1';
+      })}], yFmt:1,
+      refs:[{v:2, color:'rgba(245,158,11,0.4)', dash:[4,3], label:'Avg 2%'}]
+    });
+
+    var co = G.eda.correlations;
+    drawHBar('ch-corr', co.features, co.values.map(Math.abs), co.values.map(function(v){return v>0?'#f43f5e':'#10b981';}));
+
+    // Feature comparison table
+    var fc = G.eda.feature_comparison;
+    var html = '<table><thead><tr><th>Feature</th><th>Fraud Mean</th><th>Legit Mean</th><th>Ratio</th><th>Signal</th></tr></thead><tbody>';
+    var labels = {amount:'Amount (£)',distance_from_home:'Dist. Home (km)',distance_from_last:'Dist. Last Txn (km)',
+                  ratio_to_median:'Ratio to Median',account_age_days:'Account Age (days)',
+                  transactions_24h:'Txns in 24h',transactions_7d:'Txns in 7d'};
+    Object.keys(fc).forEach(function(k) {
+      var v = fc[k];
+      var ratio = (v.fraud_mean / (v.legit_mean||1)).toFixed(2);
+      var signal = ratio > 1.5 ? '<span class="pill p-rd">High Fraud Signal</span>' : ratio < 0.7 ? '<span class="pill p-gr">Low Fraud Signal</span>' : '<span class="pill p-ye">Moderate</span>';
+      html += '<tr><td style="font-weight:600">'+labels[k]+'</td>'
+        +'<td style="color:#f43f5e;font-family:monospace">'+v.fraud_mean.toFixed(1)+'</td>'
+        +'<td style="color:#10b981;font-family:monospace">'+v.legit_mean.toFixed(1)+'</td>'
+        +'<td style="font-family:monospace;color:'+( ratio>1.5?'#f59e0b':ratio<0.7?'#10b981':'var(--tx2)')+'">'+ratio+'×</td>'
+        +'<td>'+signal+'</td></tr>';
+    });
+    html += '</tbody></table>';
+    document.getElementById('feat-compare-table').innerHTML = html;
+  }, 10);
+}
+
+// ── MODELS ────────────────────────────────────────────────────────────────────
+function renderModels() {
+  // Summary KPIs across all models
+  var mnames = G.meta.models;
+  document.getElementById('model-kg').innerHTML = mnames.map(function(name, i) {
+    var m = G.models[name];
+    var c = [COLORS[0], COLORS[1], COLORS[2]][i];
+    return kp(name.split(' ')[0]+' AUC', m.auc.toFixed(4), 'F1='+m.f1.toFixed(3)+' | Recall='+m.recall.toFixed(3), c);
+  }).join('') + kp('Best Model', G.meta.best_model.split(' ')[0], 'AUC='+G.meta.best_auc.toFixed(4), '#f43f5e');
+
+  // SMOTE info
+  var s = G.smote;
+  document.getElementById('smote-info').innerHTML = '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:4px">'
+    + kp('Before: Fraud', s.before_fraud, 'original minority class', '#f43f5e')
+    + kp('Before: Legit', s.before_legit.toLocaleString(), 'original majority class', '#6366f1')
+    + kp('After: Fraud', s.after_fraud.toLocaleString(), 'SMOTE synthetic + real', '#10b981')
+    + kp('Ratio', (s.after_fraud/s.after_legit*100).toFixed(1)+'%', 'fraud in training set', '#f59e0b')
+    + '</div><p style="font-size:12px;color:var(--tx2);margin-top:12px">SMOTE (Synthetic Minority Oversampling Technique) creates new fraud samples by interpolating between existing minority class examples in feature space. This prevents the model from ignoring the rare class.</p>';
+
+  selModel(curModel, document.querySelector('#model-tabs .tab.act'));
+}
+
+function selModel(name, btn) {
+  curModel = name;
+  if (btn) { document.querySelectorAll('#model-tabs .tab').forEach(function(t){t.classList.remove('act');}); btn.classList.add('act'); }
+  var m = G.models[name];
+  setTimeout(function(){
+    // ROC
+    drawChart('ch-roc', {type:'line', labels: m.roc.fpr.map(function(v){return v.toFixed(2);}),
+      refs:[{v:0.5, color:'rgba(255,255,255,0.15)', dash:[4,3]}],
+      datasets:[
+        {data: m.roc.tpr, color:'#f43f5e', fill:true, noPoints:true, width:2.5},
+        {data: m.roc.fpr, color:'rgba(255,255,255,0.2)', noPoints:true, width:1, dash:[3,3]},
+      ],
+      legend:[{color:'#f43f5e',label:name+' (AUC='+m.auc.toFixed(4)+')'},{color:'rgba(255,255,255,0.3)',label:'Random'}],
+      yMin:0,yMax:1
+    });
+    // PRC
+    drawChart('ch-prc', {type:'line', labels: m.prc.recall.map(function(v){return v.toFixed(2);}),
+      datasets:[{data: m.prc.precision, color:'#6366f1', fill:true, noPoints:true, width:2.5}],
+      legend:[{color:'#6366f1',label:name+' (AP='+m.ap.toFixed(4)+')'}],
+      yMin:0,yMax:1
+    });
+    // Threshold
+    var th = m.thresholds;
+    drawChart('ch-thr', {type:'line', labels: th.map(function(t){return t.threshold;}),
+      datasets:[
+        {data: th.map(function(t){return t.precision;}), color:'#f59e0b', noPoints:false, width:2},
+        {data: th.map(function(t){return t.recall;}),    color:'#10b981', noPoints:false, width:2},
+        {data: th.map(function(t){return t.f1;}),        color:'#f43f5e', noPoints:false, width:2.5},
+      ],
+      legend:[{color:'#f59e0b',label:'Precision'},{color:'#10b981',label:'Recall'},{color:'#f43f5e',label:'F1'}],
+      yMin:0,yMax:1
+    });
+  }, 10);
+  document.getElementById('confmat').innerHTML = cmHTML(m.tp, m.fp, m.fn, m.tn);
+}
+
+// ── SHAP ──────────────────────────────────────────────────────────────────────
+function renderSHAP() {
+  selImp('Random Forest', document.querySelector('#imp-tabs .tab.act'));
+  // Score distribution
+  setTimeout(function(){
+    var sd = G.score_dist;
+    drawChart('ch-sdist', {type:'bar', labels: sd.bins.map(function(b){return b.toFixed(2);}),
+      datasets:[
+        {type:'bar', data:sd.fraud, colors: sd.bins.map(function(){return '#f43f5e99';}), label:'Fraud'},
+        {type:'bar', data:sd.legit, colors: sd.bins.map(function(){return '#6366f166';}), label:'Legit'},
+      ],
+      legend:[{color:'#f43f5e',label:'Fraud'},{color:'#6366f1',label:'Legitimate'}],
+      yFmt:0
+    });
+  }, 10);
+
+  // SHAP cards
+  var html = '';
+  G.explanations.forEach(function(ex, ei) {
+    html += '<div class="cc" style="margin-bottom:14px">'
+      + '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">'
+      + '<div><span style="font-size:13px;font-weight:600">Fraud Case #'+(ei+1)+'</span>'
+      + '<span style="margin-left:10px;font-size:22px;font-weight:700;color:#f43f5e">'+(ex.prob*100).toFixed(1)+'%</span>'
+      + ' <span style="font-size:11px;color:var(--tx2)">fraud probability</span></div>'
+      + '<span class="pill p-rd">FRAUD</span></div>';
+
+    // Sort features by abs contribution
+    var pairs = ex.features.map(function(f,i){ return {f:f, c:ex.contributions[i], v:ex.raw_values[i]}; });
+    pairs.sort(function(a,b){return Math.abs(b.c)-Math.abs(a.c);});
+    pairs.slice(0,8).forEach(function(p) {
+      var isPos = p.c > 0;
+      var pct = (Math.abs(p.c)*100).toFixed(0);
+      html += '<div class="shap-bar">'
+        + '<div class="shap-label">'+p.f+'</div>'
+        + '<div class="shap-track">'
+        + '<div class="'+(isPos?'shap-fill-pos':'shap-fill-neg')+'" style="width:'+Math.min(100,pct)+'%"></div>'
+        + '</div>'
+        + '<div class="shap-val">'+(isPos?'+':'')+p.c.toFixed(2)+'</div>'
+        + '<div style="font-size:10px;color:var(--mu);font-family:monospace;width:60px">= '+p.v.toFixed(1)+'</div>'
+        + '</div>';
+    });
+    html += '</div>';
+  });
+  document.getElementById('shap-cards').innerHTML = html;
+}
+
+function selImp(name, btn) {
+  curImp = name;
+  if (btn) { document.querySelectorAll('#imp-tabs .tab').forEach(function(t){t.classList.remove('act');}); btn.classList.add('act'); }
+  var imp = G.importance[name];
+  if (!imp) return;
+  var pairs = imp.features.map(function(f,i){return {f:f, v:imp.values[i]};});
+  pairs.sort(function(a,b){return b.v-a.v;});
+  setTimeout(function(){
+    drawHBar('ch-fimp', pairs.map(function(p){return p.f;}), pairs.map(function(p){return p.v;}), COLORS);
+  }, 10);
+}
+
+// ── PREDICT ───────────────────────────────────────────────────────────────────
+async function loadExample(type) {
+  var r = await fetch('/api/example/'+type);
+  var d = await r.json();
+  document.getElementById('f-amount').value    = d.amount;
+  document.getElementById('f-hour').value      = d.hour;
+  document.getElementById('f-dow').value       = d.day_of_week;
+  document.getElementById('f-merchant').value  = d.merchant_category;
+  document.getElementById('f-dist-home').value = d.distance_from_home;
+  document.getElementById('f-dist-last').value = d.distance_from_last;
+  document.getElementById('f-ratio').value     = d.ratio_to_median;
+  document.getElementById('f-pin').value       = d.pin_used;
+  document.getElementById('f-online').value    = d.online_order;
+  document.getElementById('f-repeat').value    = d.repeat_retailer;
+  document.getElementById('f-acct-age').value  = d.account_age_days;
+  document.getElementById('f-txn24').value     = d.transactions_24h;
+  document.getElementById('f-txn7').value      = d.transactions_7d;
+  document.getElementById('result-box').style.display='none';
+  document.getElementById('pred-err').style.display='none';
+}
+
+function clearForm() {
+  ['f-amount','f-hour','f-dow','f-dist-home','f-dist-last','f-ratio','f-acct-age','f-txn24','f-txn7']
+    .forEach(function(id){ document.getElementById(id).value=''; });
+  ['f-merchant','f-pin','f-online','f-repeat'].forEach(function(id){ document.getElementById(id).value=''; });
+  document.getElementById('result-box').style.display='none';
+  document.getElementById('pred-err').style.display='none';
+}
+
+async function predict() {
+  var err = document.getElementById('pred-err');
+  var box = document.getElementById('result-box');
+  err.style.display='none'; box.style.display='none';
+
+  var vals = {
+    amount:             parseFloat(document.getElementById('f-amount').value),
+    hour:               parseInt(document.getElementById('f-hour').value),
+    day_of_week:        parseInt(document.getElementById('f-dow').value),
+    merchant_category:  document.getElementById('f-merchant').value,
+    distance_from_home: parseFloat(document.getElementById('f-dist-home').value),
+    distance_from_last: parseFloat(document.getElementById('f-dist-last').value),
+    ratio_to_median:    parseFloat(document.getElementById('f-ratio').value),
+    pin_used:           parseInt(document.getElementById('f-pin').value),
+    online_order:       parseInt(document.getElementById('f-online').value),
+    repeat_retailer:    parseInt(document.getElementById('f-repeat').value),
+    account_age_days:   parseFloat(document.getElementById('f-acct-age').value),
+    transactions_24h:   parseInt(document.getElementById('f-txn24').value),
+    transactions_7d:    parseInt(document.getElementById('f-txn7').value),
+    v1:0, v2:0, v3:0, v4:0, v5:0
+  };
+
+  for (var k in vals) {
+    if (vals[k] === '' || vals[k] == null || (typeof vals[k]==='number' && isNaN(vals[k]))) {
+      err.textContent = 'Please fill in all fields. Missing: ' + k.replace(/_/g,' ');
+      err.style.display='block'; return;
+    }
+  }
+
+  document.getElementById('pred-spinner').style.display='block';
+  try {
+    var r = await fetch('/api/predict', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify(vals),
+    });
+    var d = await r.json();
+    if (!r.ok) { err.textContent = d.detail || 'API error'; err.style.display='block'; return; }
+
+    var isFraud = d.prediction === 'FRAUD';
+    box.className = 'result-box ' + (isFraud ? 'result-fraud' : 'result-legit');
+    box.style.display = 'block';
+
+    document.getElementById('res-title').innerHTML = (isFraud ? '🚨 ' : '✅ ') + d.prediction;
+    document.getElementById('res-prob').textContent = (d.fraud_probability*100).toFixed(2)+'%';
+    document.getElementById('res-prob').style.color = isFraud ? '#f43f5e' : '#10b981';
+    document.getElementById('res-risk').textContent = d.risk_level;
+    document.getElementById('res-risk').className = 'risk-badge risk-'+d.risk_level;
+    document.getElementById('res-model').textContent = 'Model: ' + d.model_used;
+
+    var fhtml = '';
+    (d.top_features||[]).forEach(function(f) {
+      var pct = (Math.min(1,Math.abs(f.contribution))*100).toFixed(0);
+      var isPos = f.contribution > 0;
+      fhtml += '<div class="shap-bar"><div class="shap-label">'+f.feature+'</div>'
+        +'<div class="shap-track"><div class="'+(isPos?'shap-fill-pos':'shap-fill-neg')+'" style="width:'+pct+'%"></div></div>'
+        +'<div class="shap-val">'+(isPos?'+':'')+f.contribution.toFixed(3)+'</div>'
+        +'<div style="font-size:10px;color:var(--mu);font-family:monospace;width:70px">'+f.value.toFixed(2)+'</div>'
+        +'</div>';
+    });
+    document.getElementById('res-features').innerHTML = fhtml;
+  } catch(e) {
+    err.textContent = 'Network error: '+e.message; err.style.display='block';
+  } finally {
+    document.getElementById('pred-spinner').style.display='none';
+  }
+}
+
+// ── METHODOLOGY ───────────────────────────────────────────────────────────────
+function renderMethod() {
+  document.getElementById('meth-content').innerHTML = [
+    {n:1,t:'Dataset',b:'50K Transactions',p:'Synthetic dataset mirroring IEEE-CIS Fraud Detection challenge patterns. 50,000 transactions, 2% fraud rate. Features include transaction amount, timing (hour, day), geographic signals (distance from home, distance from last transaction), behavioural signals (PIN usage, online flag, repeat retailer, account velocity), and 5 anonymised V-features mimicking PCA-transformed bank features.'},
+    {n:2,t:'Class Imbalance → SMOTE',b:'30% Target Ratio',p:'Raw data: 800 fraud vs 39,200 legitimate in training set (2%). SMOTE (Synthetic Minority Oversampling Technique) generates synthetic fraud samples by interpolating between k=5 nearest neighbours in the minority class. Result: 11,760 fraud vs 39,200 legitimate. Target ratio 30% chosen to balance recall improvement vs precision degradation.'},
+    {n:3,t:'Models',b:'LR · RF · GB',p:'Logistic Regression (C=0.1, class_weight=balanced) — interpretable baseline. Random Forest (n=150, max_depth=10, class_weight=balanced) — ensemble, handles non-linear interactions, provides feature importance. Gradient Boosting (n=150, lr=0.05, max_depth=5) — sequential boosting, often strongest on tabular fraud data. All trained on SMOTE-rebalanced data, evaluated on held-out test set.'},
+    {n:4,t:'Evaluation',b:'AUC · F1 · Recall',p:'Primary metric: AUC-ROC (threshold-independent, robust to imbalance). Secondary: Average Precision (area under PR curve — more informative than ROC for rare events). Operational metric: Recall (cost of FN >> cost of FP in fraud). Threshold sweep from 0.1–0.9 shows precision/recall tradeoff for operations teams.'},
+    {n:5,t:'Explainability',b:'Feature Importance + SHAP-style',p:'Tree-based models provide native feature importance (Gini impurity reduction). LR uses normalised coefficient magnitudes. SHAP-style contribution scores computed as: (feature_value - mean) / std × feature_importance, normalised by max. Positive = pushed towards fraud, negative = pushed towards legitimate. Shown for top 5 highest-confidence fraud predictions.'},
+    {n:6,t:'FastAPI Deployment',b:'REST API',p:'FastAPI with Pydantic validation. POST /api/predict accepts all 18 features, returns fraud probability, risk tier (LOW/MEDIUM/HIGH/CRITICAL), and top 5 contributing features with contribution scores. Model and scaler loaded once at startup via pickle. Auto-generates /docs (Swagger UI) and /redoc for API documentation.'},
+  ].map(function(s){
+    return '<div class="ms"><div class="mn">'+s.n+'</div><div><h4>'+s.t+'<span class="mbadge">'+s.b+'</span></h4><p>'+s.p+'</p></div></div>';
+  }).join('');
+}
+
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>
