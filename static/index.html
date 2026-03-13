@@ -195,32 +195,41 @@ canvas{display:block;width:100%}
     <button class="btn btn-ghost" onclick="clearForm()">↺ Clear</button>
   </div>
   <div class="cc">
+    <p style="font-size:12px;color:var(--tx2);margin-bottom:16px;line-height:1.6">
+      V1–V28 are PCA-anonymised features (matching the Kaggle Credit Card Fraud dataset). 
+      Use <b style="color:var(--ac2)">Load Fraud Example</b> or <b style="color:var(--gr)">Load Legit Example</b> to autofill with real patterns.
+    </p>
     <div class="form-grid">
-      <div class="fg"><label>Amount (£)</label><input id="f-amount" type="number" step="0.01" min="0" placeholder="e.g. 250.00"/></div>
-      <div class="fg"><label>Hour (0–23)</label><input id="f-hour" type="number" min="0" max="23" placeholder="e.g. 14"/></div>
-      <div class="fg"><label>Day of Week (0=Mon)</label><input id="f-dow" type="number" min="0" max="6" placeholder="e.g. 2"/></div>
-      <div class="fg"><label>Merchant Category</label>
-        <select id="f-merchant">
-          <option value="">Select category</option>
-          <option>entertainment</option><option>gas</option><option>grocery</option>
-          <option>online</option><option>restaurant</option><option>retail</option><option>travel</option>
-        </select>
-      </div>
-      <div class="fg"><label>Distance from Home (km)</label><input id="f-dist-home" type="number" step="0.1" min="0" placeholder="e.g. 5.0"/></div>
-      <div class="fg"><label>Distance from Last Txn (km)</label><input id="f-dist-last" type="number" step="0.1" min="0" placeholder="e.g. 3.0"/></div>
-      <div class="fg"><label>Ratio to User Median</label><input id="f-ratio" type="number" step="0.1" min="0" placeholder="e.g. 1.2"/></div>
-      <div class="fg"><label>Account Age (days)</label><input id="f-acct-age" type="number" min="1" placeholder="e.g. 730"/></div>
-      <div class="fg"><label>Transactions in 24h</label><input id="f-txn24" type="number" min="0" placeholder="e.g. 2"/></div>
-      <div class="fg"><label>Transactions in 7d</label><input id="f-txn7" type="number" min="0" placeholder="e.g. 10"/></div>
-      <div class="fg"><label>PIN Used</label>
-        <select id="f-pin"><option value="">Select</option><option value="1">Yes</option><option value="0">No</option></select>
-      </div>
-      <div class="fg"><label>Online Order</label>
-        <select id="f-online"><option value="">Select</option><option value="1">Yes</option><option value="0">No</option></select>
-      </div>
-      <div class="fg"><label>Repeat Retailer</label>
-        <select id="f-repeat"><option value="">Select</option><option value="1">Yes</option><option value="0">No</option></select>
-      </div>
+      <div class="fg"><label>V1</label><input id="f-v1" type="number" step="0.001" placeholder="0.000"/></div>
+      <div class="fg"><label>V2</label><input id="f-v2" type="number" step="0.001" placeholder="0.000"/></div>
+      <div class="fg"><label>V3</label><input id="f-v3" type="number" step="0.001" placeholder="0.000"/></div>
+      <div class="fg"><label>V4</label><input id="f-v4" type="number" step="0.001" placeholder="0.000"/></div>
+      <div class="fg"><label>V5</label><input id="f-v5" type="number" step="0.001" placeholder="0.000"/></div>
+      <div class="fg"><label>V6</label><input id="f-v6" type="number" step="0.001" placeholder="0.000"/></div>
+      <div class="fg"><label>V7</label><input id="f-v7" type="number" step="0.001" placeholder="0.000"/></div>
+      <div class="fg"><label>V8</label><input id="f-v8" type="number" step="0.001" placeholder="0.000"/></div>
+      <div class="fg"><label>V9</label><input id="f-v9" type="number" step="0.001" placeholder="0.000"/></div>
+      <div class="fg"><label>V10</label><input id="f-v10" type="number" step="0.001" placeholder="0.000"/></div>
+      <div class="fg"><label>V11</label><input id="f-v11" type="number" step="0.001" placeholder="0.000"/></div>
+      <div class="fg"><label>V12</label><input id="f-v12" type="number" step="0.001" placeholder="0.000"/></div>
+      <div class="fg"><label>V13</label><input id="f-v13" type="number" step="0.001" placeholder="0.000"/></div>
+      <div class="fg"><label>V14</label><input id="f-v14" type="number" step="0.001" placeholder="0.000"/></div>
+      <div class="fg"><label>V15</label><input id="f-v15" type="number" step="0.001" placeholder="0.000"/></div>
+      <div class="fg"><label>V16</label><input id="f-v16" type="number" step="0.001" placeholder="0.000"/></div>
+      <div class="fg"><label>V17</label><input id="f-v17" type="number" step="0.001" placeholder="0.000"/></div>
+      <div class="fg"><label>V18</label><input id="f-v18" type="number" step="0.001" placeholder="0.000"/></div>
+      <div class="fg"><label>V19</label><input id="f-v19" type="number" step="0.001" placeholder="0.000"/></div>
+      <div class="fg"><label>V20</label><input id="f-v20" type="number" step="0.001" placeholder="0.000"/></div>
+      <div class="fg"><label>V21</label><input id="f-v21" type="number" step="0.001" placeholder="0.000"/></div>
+      <div class="fg"><label>V22</label><input id="f-v22" type="number" step="0.001" placeholder="0.000"/></div>
+      <div class="fg"><label>V23</label><input id="f-v23" type="number" step="0.001" placeholder="0.000"/></div>
+      <div class="fg"><label>V24</label><input id="f-v24" type="number" step="0.001" placeholder="0.000"/></div>
+      <div class="fg"><label>V25</label><input id="f-v25" type="number" step="0.001" placeholder="0.000"/></div>
+      <div class="fg"><label>V26</label><input id="f-v26" type="number" step="0.001" placeholder="0.000"/></div>
+      <div class="fg"><label>V27</label><input id="f-v27" type="number" step="0.001" placeholder="0.000"/></div>
+      <div class="fg"><label>V28</label><input id="f-v28" type="number" step="0.001" placeholder="0.000"/></div>
+      <div class="fg"><label>Amount (£)</label><input id="f-amount" type="number" step="0.01" min="0" placeholder="e.g. 149.62"/></div>
+      <div class="fg"><label>Time (seconds)</label><input id="f-time" type="number" step="1" min="0" placeholder="e.g. 406"/></div>
     </div>
     <div class="alert alert-err" id="pred-err"></div>
     <div style="display:flex;gap:10px;align-items:center">
@@ -642,27 +651,20 @@ function selImp(name, btn) {
 async function loadExample(type) {
   var r = await fetch('/api/example/'+type);
   var d = await r.json();
-  document.getElementById('f-amount').value    = d.amount;
-  document.getElementById('f-hour').value      = d.hour;
-  document.getElementById('f-dow').value       = d.day_of_week;
-  document.getElementById('f-merchant').value  = d.merchant_category;
-  document.getElementById('f-dist-home').value = d.distance_from_home;
-  document.getElementById('f-dist-last').value = d.distance_from_last;
-  document.getElementById('f-ratio').value     = d.ratio_to_median;
-  document.getElementById('f-pin').value       = d.pin_used;
-  document.getElementById('f-online').value    = d.online_order;
-  document.getElementById('f-repeat').value    = d.repeat_retailer;
-  document.getElementById('f-acct-age').value  = d.account_age_days;
-  document.getElementById('f-txn24').value     = d.transactions_24h;
-  document.getElementById('f-txn7').value      = d.transactions_7d;
+  for (var i=1; i<=28; i++) {
+    var el = document.getElementById('f-v'+i);
+    if (el) el.value = (d['V'+i] || 0).toFixed(3);
+  }
+  document.getElementById('f-amount').value = d['Amount'];
+  document.getElementById('f-time').value   = d['Time'];
   document.getElementById('result-box').style.display='none';
   document.getElementById('pred-err').style.display='none';
 }
 
 function clearForm() {
-  ['f-amount','f-hour','f-dow','f-dist-home','f-dist-last','f-ratio','f-acct-age','f-txn24','f-txn7']
-    .forEach(function(id){ document.getElementById(id).value=''; });
-  ['f-merchant','f-pin','f-online','f-repeat'].forEach(function(id){ document.getElementById(id).value=''; });
+  for (var i=1; i<=28; i++) { var el=document.getElementById('f-v'+i); if(el) el.value=''; }
+  document.getElementById('f-amount').value='';
+  document.getElementById('f-time').value='';
   document.getElementById('result-box').style.display='none';
   document.getElementById('pred-err').style.display='none';
 }
@@ -672,28 +674,16 @@ async function predict() {
   var box = document.getElementById('result-box');
   err.style.display='none'; box.style.display='none';
 
-  var vals = {
-    amount:             parseFloat(document.getElementById('f-amount').value),
-    hour:               parseInt(document.getElementById('f-hour').value),
-    day_of_week:        parseInt(document.getElementById('f-dow').value),
-    merchant_category:  document.getElementById('f-merchant').value,
-    distance_from_home: parseFloat(document.getElementById('f-dist-home').value),
-    distance_from_last: parseFloat(document.getElementById('f-dist-last').value),
-    ratio_to_median:    parseFloat(document.getElementById('f-ratio').value),
-    pin_used:           parseInt(document.getElementById('f-pin').value),
-    online_order:       parseInt(document.getElementById('f-online').value),
-    repeat_retailer:    parseInt(document.getElementById('f-repeat').value),
-    account_age_days:   parseFloat(document.getElementById('f-acct-age').value),
-    transactions_24h:   parseInt(document.getElementById('f-txn24').value),
-    transactions_7d:    parseInt(document.getElementById('f-txn7').value),
-    v1:0, v2:0, v3:0, v4:0, v5:0
-  };
-
-  for (var k in vals) {
-    if (vals[k] === '' || vals[k] == null || (typeof vals[k]==='number' && isNaN(vals[k]))) {
-      err.textContent = 'Please fill in all fields. Missing: ' + k.replace(/_/g,' ');
-      err.style.display='block'; return;
-    }
+  var vals = {};
+  for (var i=1; i<=28; i++) {
+    var v = parseFloat(document.getElementById('f-v'+i).value);
+    if (isNaN(v)) { err.textContent='Please fill in V'+i+' (use 0 if unknown)'; err.style.display='block'; return; }
+    vals['V'+i] = v;
+  }
+  vals['Amount'] = parseFloat(document.getElementById('f-amount').value);
+  vals['Time']   = parseFloat(document.getElementById('f-time').value);
+  if (isNaN(vals['Amount'])||isNaN(vals['Time'])) {
+    err.textContent='Please fill in Amount and Time.'; err.style.display='block'; return;
   }
 
   document.getElementById('pred-spinner').style.display='block';
